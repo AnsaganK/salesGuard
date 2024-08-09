@@ -1,0 +1,23 @@
+{% load static %}
+<div class="card text-center">
+    <div class="card-header">
+        <b>{{ product.name }}</b>
+
+        <span class="
+        {% with product.quantity as quantity %}
+        {% if quantity >= 20 %} bg-success {% elif 10 < quantity and quantity < 20 %} bg-warning {% else %} bg-danger {% endif %}
+        {% endwith %}
+        p-2 position-absolute text-white rounded-2"
+              style="top:10px; right: 25px; padding: 10px; color: white; min-width: 40px">{{ product.quantity }}</span>
+    </div>
+    <div class="card-body border-top border-bottom">
+        <div class="d-flex flex-column">
+            <img src="{% if product.img %}{{ product.img.url }}{% else %}{% static 'app/img/not_found.jpg' %}{% endif %}" alt="" width="180" height="180" class="m-auto border rounded-3 mb-3">
+            <span class="text-black-50">{{ product.subcategory.name }}</span>
+            <span>{{ product.name }}</span>
+        </div>
+    </div>
+    <div class="card-footer text-s">
+        <b>{{ product.price }} тенге</b>
+    </div>
+</div>

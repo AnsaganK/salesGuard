@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    {{ subcategory.name }}
+{% endblock %}
+
+{% block name %}
+    <div class="d-flex justify-content-between align-items-center w-100">
+        {{ subcategory.category.name }} - {{ subcategory.name }}
+        <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#createProductModal">
+            <i class="fas fa-plus"></i> Добавить продукт
+        </button>
+    </div>
+{% endblock %}
+
+{% block breadcrumb %}
+    <div class="modal fade" id="createProductModal" tabindex="-1" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Добавить продукт</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="{% url 'app:create_product' subcategory.pk %}" method="post"
+                      enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="modal-body m-3">
+                        <div class="mb-3">
+                            <div style="display:flex;justify-content:center;">
+                                <input name="img" id="file" type="file" onchange="onFileSelected(event, this)"
+                                       style="display:none;">
+                                <label for="file" style="border-radius:100%;">
+                                    <img id="productImage" src="{% static 'app/img/not_found.jpg' %}"
+                                         style="height: 180px; width:180px;cursor:pointer;    border: 1px solid#b5b5b5;"
+                                         alt="">
+                                </label>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Название</label>
+                            <input type="text" class="form-control" placeholder="Название ... " name="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Цена</label>
+                            <input type="number" class="form-control" placeholder="9 990 тг." name="price">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Кол-во на складе</label>
+                            <input type="number" class="form-control" placeholder="1 шт." name="quantity">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                        <button type="submit" class="btn btn-success">Создать</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'app:home' %}">Главная</a></li>
+            <li class="breadcrumb-item"><a href="#">{{ subcategory.category.name }}</a></li>
+            <li class="breadcrumb-item active">{{ subcategory.name }}</li>
+        </ol>
+    </nav>
+{% endblock %}
+
+{% block content %}
+    <span>Всего: {{ products.count }}</span>
+    <hr>
+    {% include 'app/include/product/block.html' with products=products %}
+{% endblock %}

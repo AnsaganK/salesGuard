@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Список пользователей
+{% endblock %}
+
+{% block name %}
+    <div class="d-flex justify-content-between align-items-center w-100">
+        Пользователи
+        <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#createUserModal">
+            <i class="fas fa-user-plus"></i> Добавить пользователя
+        </button>
+    </div>
+{% endblock %}
+
+{% block breadcrumb %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'app:home' %}">Главная</a></li>
+            <li class="breadcrumb-item active">Пользователи</li>
+        </ol>
+    </nav>
+{% endblock %}
+
+{% block content %}
+    <div class="modal fade" id="createUserModal" tabindex="-1" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Создать пользователя</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="{% url 'app:create_user' %}" method="post">
+                    {% csrf_token %}
+                    <div class="modal-body m-3">
+                        <div class="mb-3">
+                            <label class="form-label">Фамилия</label>
+                            <input type="text" class="form-control" placeholder="Фамилия" name="last_name">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Имя</label>
+                            <input type="text" class="form-control" placeholder="Имя" name="first_name">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Отчество</label>
+                            <input type="text" class="form-control" placeholder="Отчество" name="patronymic">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Логин</label>
+                            <input type="text" class="form-control" placeholder="Логин" name="username">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Пароль</label>
+                            <input type="password" class="form-control" placeholder="Пароль" name="password">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Роль</label>
+                            <select class="form-control mb-3 form-select" name="role">
+                                {% for role in roles %}
+                                    <option value="{{ role.0 }}">{{ role.1 }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                        <button type="submit" class="btn btn-success">Сохранить</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <table class="table table-bordered table-hover table-responsive text-center">
+        <thead class="bg-primary-light">
+        <tr>
+            <th>№</th>
+            <th>ФИО</th>
+            <th>Логин</th>
+            <th>Пароль</th>
+            <th>Роль</th>
+            <th>Дата добавления</th>
+            <th>Действия</th>
+            <th>Доступ</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for user in users %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>
+                    <a href="{% url 'app:user_detail' user.username %}">
+                        {{ user.get_full_name }}
+                    </a>
+                </td>
+                <td>{{ user.username }}</td>
+                <td>{{ user.profile.password|default:"-" }}</td>
+                <td>{{ user.profile.get_role_display }}</td>
+                <td>{{ user.date_joined|date:'d.m.Y' }}</td>
+                <td>
+                    <a href="{% url 'app:user_detail' user.username %}" class="m-1">
+                        <i class="fa fa-eye text-success"></i>
+                    </a>
+                    <a href="#" class="m-1">
+                        <i class="fa fa-edit"></i>
+                    </a>
+                    <a href="#" class="m-1"
+                       data-url="#"
+                       data-name="#"
+                       data-bs-target="#deleteClientModal" data-bs-toggle="modal"
+                       onclick="setDeleteClientUrl(this)"
+                    >
+                        <i class="fa fa-trash text-danger"></i>
+                    </a>
+                </td>
+                <td>
+                    <a href="{% url 'app:change_user_status' user.username %}">
+                        {% if   user.is_active %}
+                            <i class="fa fa-lock-open text-success"></i>
+                        {% else %}
+                            <i class="fa fa-lock text-danger"></i>
+                        {% endif %}
+                    </a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

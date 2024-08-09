@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Список товаров
+{% endblock %}
+
+{% block name %}
+    Список товаров
+{% endblock %}
+
+{% block breadcrumb %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'app:home' %}">Главная</a></li>
+            <li class="breadcrumb-item active">Товары</li>
+        </ol>
+    </nav>
+{% endblock %}
+
+{% block content %}
+    <span>Всего: {{ products.count }}</span>
+    <hr>
+    {% include 'app/include/product/block.html' with products=products %}
+{% endblock %}

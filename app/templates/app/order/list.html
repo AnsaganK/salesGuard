@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    История заказов
+{% endblock %}
+
+{% block name %}
+    История заказов
+{% endblock %}
+
+{% block breadcrumb %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'app:home' %}">Главная</a></li>
+            <li class="breadcrumb-item active">История заказов</li>
+        </ol>
+    </nav>
+{% endblock %}
+
+{% block content %}
+    <table class="table table-responsive table text-center">
+        <thead class="bg-primary-light">
+        <tr>
+            <th>№</th>
+            <th>Клиент</th>
+            <th>Фото</th>
+            <th>Товар</th>
+            <th>Кол-во</th>
+            <th>Цена за шт.</th>
+            <th>Сумма</th>
+            <th>Действия</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for order in orders %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ order.client.get_name }}</td>
+                <td class="text-start"><img style="margin: auto; display: block" src="{% if order.product.img %}{{ order.product.img.url }}{% else %}{% static 'app/img/not_found.jpg' %}{% endif %}" width="50" height="50" alt=""></td>
+                <td class="text-start">{{ order.product.name }}</td>
+                <td>{{ order.quantity }}</td>
+                <td>{{ order.product.price }} тг</td>
+                <td>{{ order.get_sum }} тг</td>
+                <td>
+                    <a href="" class="me-2 ms-2"><i class="fa fa-eye text-success"></i></a>
+                    <a href="{% url 'app:order_check_pdf' order.uuid %}" class="me-2 ms-2"><i class="fa fa-download"></i></a>
+                    <a href="{% url 'app:delete_order' order.uuid %}" class="me-2 ms-2"><i
+                            class="fa fa-trash text-danger"></i></a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

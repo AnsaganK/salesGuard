@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Список категории
+{% endblock %}
+
+{% block name %}
+    <div class="d-flex justify-content-between align-items-center w-100">
+        Список категории
+        <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#createCategoryModal">
+            <i class="fas fa-plus"></i> Добавить категорию
+        </button>
+    </div>
+{% endblock %}
+
+{% block breadcrumb %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'app:home' %}">Главная</a></li>
+            <li class="breadcrumb-item">Администрирование</li>
+            <li class="breadcrumb-item active">Категории</li>
+        </ol>
+    </nav>
+{% endblock %}
+
+{% block content %}
+    <div class="modal fade" id="createCategoryModal" tabindex="-1" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Создать категорию</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="{% url 'app:create_category' %}" method="post">
+                    {% csrf_token %}
+                    <div class="modal-body m-3">
+                        <div class="mb-3">
+                            <label class="form-label">Название</label>
+                            <input type="text" class="form-control" placeholder="Название" name="name">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                        <button type="submit" class="btn btn-success">Создать</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <table class="table table-bordered table-hover table-responsive text-center">
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>Название</th>
+            <th>Кол-во</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for category in categories %}
+            {% for subcategory in category.subcategories.all %}
+                <tr>
+                    {% if forloop.counter == 1 %}
+                        <td rowspan="{{ category.subcategories.count|add:1 }}">{{ category.name }}</td>
+                    {% endif %}
+                    <td>
+                        <a href="{{ subcategory.get_absolute_url }}">
+                            {{ subcategory.name }}
+                        </a>
+                    </td>
+                    <td>{{ subcategory.products.count }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td rowspan="2">{{ category.name }}</td>
+                    <td>
+                        <i class="text-black-50">Ничего не найдено</i>
+                    </td>
+                    <td>
+                        -
+                    </td>
+                </tr>
+            {% endfor %}
+            <form action="{% url 'app:create_subcategory' category.id %}" method="post">
+                {% csrf_token %}
+                <tr>
+                    <td class="align-middle d-block">
+                        <div>
+                            <input type="text" class="form-control" placeholder="Название" name="name">
+                        </div>
+                    </td>
+                    <td>
+                        <button type="submit" class="btn btn-success">
+                            Добавить
+                        </button>
+                    </td>
+                </tr>
+            </form>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

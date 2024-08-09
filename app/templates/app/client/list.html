@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Список клиентов
+{% endblock %}
+
+{% block name %}
+    <div class="d-flex justify-content-between align-items-center w-100">
+        Клиенты
+        <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#createClientModal">
+            <i class="fas fa-plus"></i> Добавить клиента
+        </button>
+    </div>
+{% endblock %}
+
+{% block breadcrumb %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'app:home' %}">Главная</a></li>
+            <li class="breadcrumb-item active">Клиенты</li>
+        </ol>
+    </nav>
+{% endblock %}
+
+{% block content %}
+    <!-- Modal -->
+    <div class="modal fade" id="createClientModal" tabindex="-1" style="display: none;" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Создать клиента</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="{% url 'app:create_client' %}" method="post" class="form">
+                    {% csrf_token %}
+                    <div class="modal-body m-3">
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-center">
+                                <div class="client_type">
+                                    <input type="radio" id="individual" name="name_type" checked
+                                           onchange="changeFields(this.id)">
+                                    <label for="individual">Физ. лицо</label>
+                                </div>
+                                <div class="client_type">
+                                    <input type="radio" id="entity" name="name_type"
+                                           onchange="changeFields(this.id)">
+                                    <label for="entity">Юр. лицо</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3" id="entity_fields">
+                            <label class="form-label">Название</label>
+                            <input type="text" class="form-control" placeholder="ИП Medina" name="name">
+                        </div>
+                        <div class="mb-3" id="individual_fields">
+                            <div class="row justify-content-center">
+                                <div class="col">
+                                    <label class="form-label">Фамилия</label>
+                                    <input type="text" class="form-control" placeholder="Иванов" name="last_name">
+                                </div>
+
+                                <div class="col">
+                                    <label class="form-label">Имя</label>
+                                    <input type="text" class="form-control" placeholder="Иван" name="first_name">
+                                </div>
+
+                                <div class="col">
+                                    <label class="form-label">Отчество</label>
+                                    <input type="text" class="form-control" placeholder="Иванович" name="patronymic">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Номер телефона</label>
+                            <input type="text" class="form-control" placeholder="8 777 000 00 00" name="phone">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Почта</label>
+                            <input type="email" class="form-control" placeholder="ivanov@mail.ru" name="email">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Адрес</label>
+                            <input type="text" class="form-control" placeholder="Ул. Маяковского 23" name="address">
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                        <button type="submit" class="btn btn-success">Сохранить</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="deleteClientModal" tabindex="-1" style="display: none;" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Удаление</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Удалить клиента <span id="deleted_client_name"></span>?<br>
+                    <span class="text-black-50">Это действие нельзя отменить</span>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <a href="#" class="btn btn-danger">Удалить</a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <table class="table table-bordered table-hover table-responsive text-center">
+        <thead class="bg-primary-light">
+        <tr>
+            <td>№</td>
+            <td>ФИО/Название</td>
+            <td>Номер</td>
+            <td>Дата создания</td>
+            <td>Действия</td>
+        </tr>
+        </thead>
+        <tbody>
+        {% for client in clients %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ client.get_name }}</td>
+                <td>{{ client.phone|default:'' }}</td>
+                <td>{{ client.created_at|default:'' }}</td>
+                <td>
+                    <a href="#" class="m-1">
+                        <i class="fa fa-edit"></i>
+                    </a>
+                    <a href="#" class="m-1"
+                       data-url="{% url 'app:delete_client' client.pk %}"
+                       data-name="{{ client.get_name }}"
+                       data-bs-target="#deleteClientModal" data-bs-toggle="modal"
+                       onclick="setDeleteClientUrl(this)"
+                    >
+                        <i class="fa fa-trash text-danger"></i>
+                    </a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+
+{% block script %}
+    <script>
+        function changeFields(value) {
+            console.log(value)
+            let individual_fields = document.getElementById('individual_fields');
+            let entity_fields = document.getElementById('entity_fields');
+
+            if (value === 'individual') {
+                entity_fields.classList.add('d-none');
+                individual_fields.classList.remove('d-none');
+            } else {
+                individual_fields.classList.add('d-none');
+                entity_fields.classList.remove('d-none');
+            }
+        }
+
+        function setDeleteClientUrl(elem) {
+            let url = elem.dataset.url;
+            let name = elem.dataset.name;
+            let modal = document.getElementById('deleteClientModal');
+            let a = modal.querySelector('a');
+            let deleted_client_name = modal.querySelector('#deleted_client_name');
+
+            deleted_client_name.innerHTML = `"<b>${name}</b>"`;
+            a.href = url;
+        }
+
+        changeFields('individual')
+    </script>
+{% endblock %}
