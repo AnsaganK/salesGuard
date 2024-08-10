@@ -25,7 +25,9 @@ def create_order(request):
     if request.method == 'POST':
         form = OrderForm(request.POST)
         if form.is_valid():
-            order = form.save()
+            order = form.save(commit=False)
+            order.created_user = request.user
+            order.save()
             messages.success(request, f'Заказ №{order.id} создан')
         else:
             print(form.errors)

@@ -1,5 +1,6 @@
 import uuid
 
+from django.contrib.auth.models import User
 from django.db import models
 from pytils.translit import slugify
 
@@ -36,6 +37,8 @@ class Order(BaseModel):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='orders')
     client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='orders')
     quantity = models.PositiveIntegerField(default=1)
+
+    created_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
 
     class Meta:
         verbose_name = 'Продажа'

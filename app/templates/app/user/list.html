@@ -70,59 +70,62 @@
             </div>
         </div>
     </div>
-    <table class="table table-bordered table-hover table-responsive text-center">
-        <thead class="bg-primary-light">
-        <tr>
-            <th>№</th>
-            <th>ФИО</th>
-            <th>Логин</th>
-            <th>Пароль</th>
-            <th>Роль</th>
-            <th>Дата добавления</th>
-            <th>Действия</th>
-            <th>Доступ</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for user in users %}
+    <div class="w-100 overflow-auto">
+
+        <table class="table table-bordered table-hover table-responsive text-center">
+            <thead class="bg-primary-light">
             <tr>
-                <td>{{ forloop.counter }}</td>
-                <td>
-                    <a href="{% url 'app:user_detail' user.username %}">
-                        {{ user.get_full_name }}
-                    </a>
-                </td>
-                <td>{{ user.username }}</td>
-                <td>{{ user.profile.password|default:"-" }}</td>
-                <td>{{ user.profile.get_role_display }}</td>
-                <td>{{ user.date_joined|date:'d.m.Y' }}</td>
-                <td>
-                    <a href="{% url 'app:user_detail' user.username %}" class="m-1">
-                        <i class="fa fa-eye text-success"></i>
-                    </a>
-                    <a href="#" class="m-1">
-                        <i class="fa fa-edit"></i>
-                    </a>
-                    <a href="#" class="m-1"
-                       data-url="#"
-                       data-name="#"
-                       data-bs-target="#deleteClientModal" data-bs-toggle="modal"
-                       onclick="setDeleteClientUrl(this)"
-                    >
-                        <i class="fa fa-trash text-danger"></i>
-                    </a>
-                </td>
-                <td>
-                    <a href="{% url 'app:change_user_status' user.username %}">
-                        {% if   user.is_active %}
-                            <i class="fa fa-lock-open text-success"></i>
-                        {% else %}
-                            <i class="fa fa-lock text-danger"></i>
-                        {% endif %}
-                    </a>
-                </td>
+                <th>№</th>
+                <th>ФИО</th>
+                <th>Логин</th>
+                <th>Пароль</th>
+                <th>Роль</th>
+                <th>Дата добавления</th>
+                <th>Действия</th>
+                <th>Доступ</th>
             </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+            {% for user in users %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>
+                        <a href="{% url 'app:user_detail' user.username %}">
+                            {{ user.get_full_name }}
+                        </a>
+                    </td>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.profile.password|default:"-" }}</td>
+                    <td>{{ user.profile.get_role_display }}</td>
+                    <td>{{ user.date_joined|date:'d.m.Y' }}</td>
+                    <td>
+                        <a href="{% url 'app:user_detail' user.username %}" class="m-1">
+                            <i class="fa fa-eye text-success"></i>
+                        </a>
+                        <a href="#" class="m-1">
+                            <i class="fa fa-edit"></i>
+                        </a>
+                        <a href="#" class="m-1"
+                           data-url="#"
+                           data-name="#"
+                           data-bs-target="#deleteClientModal" data-bs-toggle="modal"
+                           onclick="setDeleteClientUrl(this)"
+                        >
+                            <i class="fa fa-trash text-danger"></i>
+                        </a>
+                    </td>
+                    <td>
+                        <a href="{% url 'app:change_user_status' user.username %}">
+                            {% if   user.is_active %}
+                                <i class="fa fa-lock-open text-success"></i>
+                            {% else %}
+                                <i class="fa fa-lock text-danger"></i>
+                            {% endif %}
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
 {% endblock %}

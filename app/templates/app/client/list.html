@@ -96,7 +96,6 @@
             </div>
         </div>
     </div>
-
     <!-- Modal -->
     <div class="modal fade" id="deleteClientModal" tabindex="-1" style="display: none;" aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -117,41 +116,43 @@
             </div>
         </div>
     </div>
-
-    <table class="table table-bordered table-hover table-responsive text-center">
-        <thead class="bg-primary-light">
-        <tr>
-            <td>№</td>
-            <td>ФИО/Название</td>
-            <td>Номер</td>
-            <td>Дата создания</td>
-            <td>Действия</td>
-        </tr>
-        </thead>
-        <tbody>
-        {% for client in clients %}
+    <div class="w-100 overflow-auto">
+        <table class="table table-bordered table-hover table-responsive text-center w-100">
+            <thead class="bg-primary-light">
             <tr>
-                <td>{{ forloop.counter }}</td>
-                <td>{{ client.get_name }}</td>
-                <td>{{ client.phone|default:'' }}</td>
-                <td>{{ client.created_at|default:'' }}</td>
-                <td>
-                    <a href="#" class="m-1">
-                        <i class="fa fa-edit"></i>
-                    </a>
-                    <a href="#" class="m-1"
-                       data-url="{% url 'app:delete_client' client.pk %}"
-                       data-name="{{ client.get_name }}"
-                       data-bs-target="#deleteClientModal" data-bs-toggle="modal"
-                       onclick="setDeleteClientUrl(this)"
-                    >
-                        <i class="fa fa-trash text-danger"></i>
-                    </a>
-                </td>
+                <td>№</td>
+                <td>ФИО/Название</td>
+                <td>Номер</td>
+                <td>Дата создания</td>
+                <td>Действия</td>
             </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+            {% for client in clients %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ client.get_name }}</td>
+                    <td>{{ client.phone|default:'' }}</td>
+                    <td>{{ client.created_at|default:'' }}</td>
+                    <td>
+                        <a href="#" class="m-1">
+                            <i class="fa fa-edit"></i>
+                        </a>
+                        <a href="#" class="m-1"
+                           data-url="{% url 'app:delete_client' client.pk %}"
+                           data-name="{{ client.get_name }}"
+                           data-bs-target="#deleteClientModal" data-bs-toggle="modal"
+                           onclick="setDeleteClientUrl(this)"
+                        >
+                            <i class="fa fa-trash text-danger"></i>
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
 {% endblock %}
 
 {% block script %}
