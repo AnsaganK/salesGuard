@@ -35,6 +35,9 @@ def create_user(request):
             return redirect(reverse('app:user_list'))
 
         user = form.save()
+        password = form.cleaned_data['password']
+        user.set_password(password)
+        user.save()
         profile = user.profile
         form = ProfileEditForm(request.POST, instance=profile)
         if form.is_valid():
